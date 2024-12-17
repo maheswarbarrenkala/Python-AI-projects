@@ -1,0 +1,28 @@
+import numpy as np 
+import pandas as pd
+import matplotlib.pylab as plt
+from keras import models
+from keras.layers import Dense
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+df=pd.read_csv("voice.csv")
+label_value_count=df.label.value_counts()
+print(label_value_count)
+print(df.info())
+#Replacing labels for male as 1 and for females as 0
+dict = {'label':{'male':1,'female':0}}      
+df.replace(dict,inplace = True)     
+df.shape
+x=df.loc[:,df.columns!='label']
+y=df.loc[:,'label']
+#Scaling
+scaler=MinMaxScaler((-1,1))
+x=scaler.fit_transform(x)
+print(x)
+#Dividing into Test and Train 
+x_train,x_test,y_train,y_test=train_test_split(x, y, test_size=0.2, random_state=7)
+from sklearn.svm import SVC # "Support Vector Classifier" 
+clf = SVC(kernel='linear') 
+clf.fit(x_train, y_train) 
+y_pred=clf.predict(x_test)
+print("Accuracy score is",accuracy_score(y_pred,y_test))
